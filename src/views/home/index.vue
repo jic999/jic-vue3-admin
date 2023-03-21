@@ -1,5 +1,14 @@
 <script setup name="Home">
 import TheIcon from '@/components/icon/TheIcon.vue'
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  $loadingBar.start()
+  setTimeout(() => {
+    $loadingBar.finish()
+    $message.success('加载完成，Perfect~')
+  }, 1500)
+})
 </script>
 
 <template>
