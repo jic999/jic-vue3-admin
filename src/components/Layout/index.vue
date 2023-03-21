@@ -20,10 +20,6 @@ import AppSidebar from './AppSidebar.vue'
 </template>
 
 <style lang="scss" scoped>
-.n-layout-header {
-  padding: 24px;
-}
-
 .n-layout-footer {
   padding: 24px;
 }

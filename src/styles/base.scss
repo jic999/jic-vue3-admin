@@ -2,6 +2,7 @@
 ::before,
 ::after {
   box-sizing: border-box;
+  border: 0 solid #e8e8e8;
 }
 
 body {
@@ -12,4 +13,8 @@ a {
   display: block;
   color: inherit;
   text-decoration: none;
+}
+
+input {
+  outline: none;
 }

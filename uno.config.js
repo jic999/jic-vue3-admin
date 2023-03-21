@@ -8,10 +8,23 @@ import {
 import { presetScalpel } from 'unocss-preset-scalpel'
 
 export default defineConfig({
-  rules: [],
-  shortcuts: {},
+  rules: [
+    [
+      /wh-([\d]+)/,
+      ([, size]) => ({
+        width: size + 'px',
+        height: size + 'px',
+      }),
+    ],
+  ],
+  shortcuts: {
+    'wh-full': 'w-full h-full',
+  },
   theme: {
-    colors: {},
+    colors: {
+      primary: 'var(--primary-c)',
+      secondary: 'var(--secondary-c)',
+    },
   },
   presets: [
     presetUno(),

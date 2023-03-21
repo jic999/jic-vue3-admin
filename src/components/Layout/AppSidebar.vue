@@ -7,6 +7,7 @@ const route = useRoute()
 const router = useRouter()
 
 const menuOptions = router.options.routes
+  .filter((item) => !item.isHidden && item.name)
   .map((item) => getMenuItem(item))
   .sort((a, b) => a.order - b.order)
 

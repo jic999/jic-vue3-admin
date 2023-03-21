@@ -1,4 +1,11 @@
-export const staticRoutes = []
+export const staticRoutes = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/login/index.vue'),
+    isHidden: true,
+  },
+]
 
 const modules = import.meta.glob('@/views/**/route.js', { eager: true })
 const dynamicRoutes = []
