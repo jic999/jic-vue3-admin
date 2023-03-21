@@ -9,6 +9,7 @@ export default {
   meta: {
     title: '工作台',
     order: 1,
+    icon: 'carbon:cloud-alerting',
   },
   children: [
     {

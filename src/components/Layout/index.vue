@@ -6,7 +6,7 @@ import AppSidebar from './AppSidebar.vue'
 
 <template>
   <n-layout has-sider>
-    <n-layout-sider bordered content-style="padding: 24px;">
+    <n-layout-sider bordered content-style="padding: 0 12px;" h-100vh>
       <AppSidebar />
     </n-layout-sider>
     <n-layout>
