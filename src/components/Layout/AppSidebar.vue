@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -16,16 +16,22 @@ function getMenuItem(route) {
     path: route.path,
     order: route.meta?.order || 0,
   }
-  if (route.isSingle || !route.children) return menuItem
+  if (!route.children) return menuItem
+  if (route.isSingle)
+    return {
+      ...menuItem,
+      key: route.children[0].name,
+    }
   menuItem.children = route.children.map((item) => getMenuItem(item))
   return menuItem
 }
 
-const defaultActive = ref(route.name)
 function handleChangeMenu(key) {
   router.push({ name: key })
   defaultActive.value = key
 }
+const defaultActive = ref(route.name)
+console.log(defaultActive.value)
 </script>
 
 <template>
