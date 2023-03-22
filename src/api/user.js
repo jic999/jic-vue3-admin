@@ -10,7 +10,7 @@ export default {
     console.log('login before', params)
     return req.post('/user/login', params)
   },
-  validateToken() {
+  reqAuth() {
     return req.post('/user/login-status')
   },
 }

@@ -37,7 +37,7 @@ async function tokenLogin() {
   const userInfo = lStorage.get('userInfo')
   if (!userInfo) return
   // 检查登录状态 若已登陆 验证token
-  const { code, data } = await userApi.validateToken()
+  const { code, data } = await userApi.reqAuth()
   if (code !== 0) return
   // 若验证成功 记录状态并进入主页
   setUserInfo(data)
