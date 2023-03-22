@@ -1,11 +1,6 @@
 <script setup name="Home">
 import { onMounted } from 'vue'
 import TheIcon from '@/components/icon/TheIcon.vue'
-import { useUserStore } from '@/stores/user'
-
-const { userInfo } = useUserStore()
-
-console.log(userInfo)
 
 onMounted(() => {
   $loadingBar.start()

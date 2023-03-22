@@ -1,4 +1,5 @@
 import { useUserStore } from '@/stores/user'
+import { lStorage } from '@/utils/storage'
 
 const WHITE_LIST_PAGE = ['/login']
 
@@ -13,11 +14,14 @@ export function authGuard(router) {
     if (userInfo.id) return next()
     // 否则 验证token
     try {
+      // 查看token是否过期
+      if (!lStorage.get('userInfo')) throw new Error()
+      // 未过期 验证token
       const res = await tokenLogin()
       if (res) $message.success('身份验证成功~')
       next()
     } catch (error) {
-      $message.error('身份验证失败，重新登录')
+      $message.error('身份验证失败，请登录')
       next('/login')
     }
   })

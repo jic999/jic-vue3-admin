@@ -1,13 +1,12 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
 
 import userApi from '@/api/user'
 import { lStorage } from '@/utils/storage'
 import { useUserStore } from '@/stores/user'
 
-const { userInfo, setUserInfo } = useUserStore()
+const { setUserInfo, tokenLogin } = useUserStore()
 
 const loginParams = reactive({
   username: '',
@@ -33,19 +32,14 @@ async function handleLogin() {
   }
 }
 
-async function tokenLogin() {
-  const userInfo = lStorage.get('userInfo')
-  if (!userInfo) return
-  // 检查登录状态 若已登陆 验证token
-  const { code, data } = await userApi.reqAuth()
-  if (code !== 0) return
-  // 若验证成功 记录状态并进入主页
-  setUserInfo(data)
-  router.push('/')
-}
-
 onMounted(() => {
-  tokenLogin()
+  if (lStorage.get('userInfo')) {
+    tokenLogin()
+      .then(() => {
+        router.push('/')
+      })
+      .catch(() => {})
+  }
 })
 </script>
 
