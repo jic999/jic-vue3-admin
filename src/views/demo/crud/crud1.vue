@@ -1,8 +1,11 @@
 <script setup>
-import { h } from 'vue'
+import { h, ref } from 'vue'
 import { NButton, NSwitch } from 'naive-ui'
 import { renderIcon } from '@/utils/icon'
-import SmartTable from '@/components/crud/table/SmartTable.vue'
+import SmartTable from '@/components/crud/SmartTable.vue'
+import SmartForm from '@/components/crud/SmartForm.vue'
+
+import userApi from '@/api/user'
 
 const columns = [
   {
@@ -13,40 +16,45 @@ const columns = [
   {
     title: '用户名',
     key: 'username',
+    width: 120,
+    ellipsis: { tooltip: true },
+  },
+  {
+    title: '头像',
+    key: 'avatarUrl',
+    width: 100,
+    render(row) {
+      if (row.avatarUrl) return h('img', { src: row.avatarUrl, class: 'wh-36' })
+      else return h('span', {}, '无')
+    },
   },
   {
     title: '邮箱',
     key: 'email',
+    width: 120,
+    ellipsis: { tooltip: true },
   },
   {
     title: '是否vip',
     key: 'isVip',
+    width: 100,
     render(row) {
       return h(NSwitch, { value: row.isVip === 1 })
     },
   },
   {
-    title: '头像',
-    key: 'avatarUrl',
-    render(row) {
-      return h('img', { src: row.avatarUrl, class: 'wh-36' })
-    },
-  },
-  {
     title: '用户类型',
     key: 'type',
+    width: 150,
     render(row) {
       const text = {
         0: '普通用户',
         1: '管理员',
-        9: '超级管理员',
       }
       const style = {
         0: { backgroundColor: '#e2e2e2' },
         1: { backgroundColor: '#18a058', color: '#fff' },
-        9: { backgroundColor: '#009688', color: '#fff' },
       }
-
       return h(
         'span',
         { class: 'p-8 br-4', style: { ...style[row.type] } },
@@ -55,15 +63,39 @@ const columns = [
     },
   },
   {
+    title: '状态',
+    key: 'status',
+    width: 120,
+    render(row) {
+      return h(NSwitch, { value: row.status === 0 })
+    },
+  },
+  {
+    title: '创建时间',
+    key: 'createAt',
+    render(row) {
+      const time = new Date(row.createAt)
+      return h('span', {}, time.toLocaleString())
+    },
+  },
+  {
+    title: '更新时间',
+    key: 'updateAt',
+    render(row) {
+      const time = new Date(row.updateAt)
+      return h('span', {}, time.toLocaleString())
+    },
+  },
+  {
     title: '操作',
     key: 'actions',
     fixed: 'right',
-    width: 132,
+    width: 216,
     render(row, col, index) {
       return h('div', { class: 'flex gap-12' }, [
         h(
           NButton,
-          { type: 'primary', size: 'small' },
+          { type: 'primary', size: 'tiny' },
           {
             default: () => '查看',
             icon: renderIcon('carbon:view', { side: 14 }),
@@ -71,7 +103,7 @@ const columns = [
         ),
         h(
           NButton,
-          { type: 'default', size: 'small' },
+          { type: 'default', size: 'tiny' },
           {
             default: () => '编辑',
             icon: renderIcon('carbon:edit', { side: 14 }),
@@ -79,7 +111,7 @@ const columns = [
         ),
         h(
           NButton,
-          { type: 'error', size: 'small' },
+          { type: 'error', size: 'tiny' },
           {
             default: () => '删除',
             icon: renderIcon('carbon:trash-can', { side: 14 }),
@@ -90,110 +122,57 @@ const columns = [
   },
 ]
 
-const data = [
-  {
-    id: 61,
-    username: 'Timothy Taylor',
-    email: 'c.ntev@bixv.pro',
-    isVip: 1,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 0,
-  },
-  {
-    id: 62,
-    username: 'Amy Johnson',
-    email: 'u.mniavdbkr@uqmivey.ao',
-    isVip: 1,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 0,
-  },
-  {
-    id: 63,
-    username: 'George Miller',
-    email: 'p.xzipdvq@wfkft.ag',
-    isVip: 0,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 1,
-  },
-  {
-    id: 64,
-    username: 'Amy Martin',
-    email: 'e.wroo@ctddsnx.cn',
-    isVip: 1,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 0,
-  },
-  {
-    id: 65,
-    username: 'Anthony Miller',
-    email: 'f.fhlszik@jvegqaq.de',
-    isVip: 0,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 0,
-  },
-  {
-    id: 66,
-    username: 'Jessica Clark',
-    email: 'b.jfntamexj@dnhcvwygw.nt',
-    isVip: 0,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 0,
-  },
-  {
-    id: 67,
-    username: 'William Harris',
-    email: 'k.luuz@kexgml.ht',
-    isVip: 0,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 9,
-  },
-  {
-    id: 68,
-    username: 'Helen Johnson',
-    email: 'b.ntpsz@klhm.ec',
-    isVip: 1,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 1,
-  },
-  {
-    id: 69,
-    username: 'Brenda Jackson',
-    email: 's.xeysxfnel@dfsfln.sy',
-    isVip: 1,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 0,
-  },
-  {
-    id: 70,
-    username: 'Barbara Jackson',
-    email: 'n.bwuwrilq@gzsrgogxx.mr',
-    isVip: 1,
-    avatarUrl:
-      'https:/th.bing.com/th/id/OIP.vE_-AxYszvlZjXDWijrwwwAAAA?pid=ImgDet&rs=1',
-    type: 1,
-  },
-]
+// TODO SmartTable
+// 增删改查 分页
 
-const getData = () =>
-  new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ code: 0, data })
-    }, 800)
-  })
+userApi.reqList().then((res) => {
+  console.log(res)
+})
+
+/* 模态框 */
+const modalVisible = ref(false)
+
+const modalStyle = {
+  width: '600px',
+}
+const modalFooterStyle = {
+  display: 'flex',
+  justifyContent: 'end',
+  gap: '0 16px',
+}
+function handleCommit() {
+  $message.success('提交成功')
+}
+function handleCancel() {
+  $message.info('取消')
+}
 </script>
 
 <template>
   <h1>Crud1</h1>
-  <SmartTable :columns="columns" :get-data="getData" />
+  <n-button @click="modalVisible = true">Click!</n-button>
+  <n-modal
+    v-model:show="modalVisible"
+    class="custom-card"
+    preset="card"
+    :style="modalStyle"
+    :footer-style="modalFooterStyle"
+    title="卡片预设"
+    size="huge"
+    :bordered="false"
+  >
+    <SmartForm :form-items="{}" />
+    <template #footer>
+      <n-button @click="handleCancel">取消</n-button>
+      <n-button type="primary" @click="handleCommit">提交</n-button>
+    </template>
+  </n-modal>
+  <SmartTable
+    :columns="columns"
+    :get-data="userApi.reqList"
+    :scroll-x="1500"
+    bordered
+  />
 </template>
 
 <style lang="scss" scoped></style>

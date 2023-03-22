@@ -3,10 +3,6 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 
 const props = defineProps({
-  columns: {
-    type: Array,
-    required: true,
-  },
   getData: {
     type: Function,
     required: true,
@@ -36,7 +32,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-data-table :columns="columns" :data="tableData" :loading="isLoading" />
+  <n-data-table :data="tableData" :loading="isLoading" />
 </template>
 
 <style lang="scss" scoped></style>

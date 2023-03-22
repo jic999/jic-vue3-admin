@@ -13,4 +13,7 @@ export default {
   reqAuth() {
     return req.post('/user/login-status')
   },
+  reqList() {
+    return req.get('/user/admin/list')
+  },
 }
