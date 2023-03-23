@@ -1,18 +1,9 @@
 <script setup>
 import { reactive, ref, nextTick, computed } from 'vue'
 import TheIcon from '@/components/icon/TheIcon.vue'
+import { isArray, isEmptyObj, isObject, isString } from '@/utils/is'
 
-class MyImage {
-  constructor(preview, raw = null) {
-    this.preview = preview
-    this.raw = raw
-  }
-}
-function createImage(file) {
-  console.log('file', file)
-  return new MyImage(URL.createObjectURL(file), file)
-}
-
+// TODO 限制文件大小、类型
 const props = defineProps({
   modelValue: {
     type: null,
@@ -20,7 +11,7 @@ const props = defineProps({
   },
   accept: {
     type: String,
-    default: undefined,
+    default: 'image/*',
   },
   multiple: {
     type: Boolean,
@@ -30,23 +21,55 @@ const props = defineProps({
     type: Number,
     default: 1,
   },
+  // TODO 已有图片预览
+  // 先转为MyImage 再加入fileList
   files: {
     type: Array,
     default: undefined,
+  },
+  urlFiled: {
+    type: String,
+    default: 'url',
+  },
+  fileFiled: {
+    type: String,
+    default: 'raw',
   },
   disabled: {
     type: Boolean,
     default: false,
   },
-  isSmart: {
-    type: Boolean,
-    default: false,
-  },
 })
+const $emits = defineEmits(['update:modelValue'])
+
+function createImage(file) {
+  const myImage = {}
+  myImage[props.urlFiled] = URL.createObjectURL(file)
+  myImage[props.fileFiled] = file
+  return myImage
+}
 
 const $upload = ref()
 
 const fileList = reactive([])
+
+if (props.files || props.modelValue) {
+  transFiles()
+}
+function transFiles() {
+  const tmp = props.files || props.modelValue
+  if (isArray(tmp)) {
+    arr.forEach((img) => {
+      fileList.push(img)
+    })
+  } else if (isObject(tmp) && !isEmptyObj(tmp)) {
+    fileList.push(tmp)
+  } else if (isString(tmp)) {
+    const myImage = {}
+    myImage[props.urlFiled] = tmp
+    fileList.push(myImage)
+  }
+}
 
 const action = ref('add') // add | update
 
@@ -64,6 +87,9 @@ function addImg() {
 }
 
 let currentIndex = -1
+function binding() {
+  props.modelValue && $emits('update:modelValue', fileList)
+}
 function updateImg(i) {
   currentIndex = i
   action.value = 'update'
@@ -71,6 +97,7 @@ function updateImg(i) {
 }
 function deleteImg(i) {
   fileList.splice(i, 1)
+  binding()
 }
 function viewImg(i) {
   console.log('view')
@@ -99,7 +126,12 @@ function onChange(e) {
     },
   }
   handlers[action.value]()
+  binding()
 }
+
+defineExpose({
+  getFileList: () => fileList,
+})
 </script>
 
 <template>
@@ -109,7 +141,7 @@ function onChange(e) {
       :key="i"
       class="preview-img relative wh-80 br-8 overflow-hidden"
     >
-      <img class="wh-full" :src="img.preview" />
+      <img class="wh-full" :src="img[urlFiled]" object-center object-cover />
       <div
         :class="`preview-img__mark absolute t-0 l-0 flex-center gap-2 wh-full
         bg-00000055 text-fff`"
