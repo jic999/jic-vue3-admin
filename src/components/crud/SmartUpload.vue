@@ -3,7 +3,9 @@ import { reactive, ref, nextTick, computed } from 'vue'
 import TheIcon from '@/components/icon/TheIcon.vue'
 import _ from 'lodash'
 
-// TODO 限制文件大小、类型
+/**
+ * TODO 限制文件大小、类型
+ *  */
 const props = defineProps({
   modelValue: {
     type: null,
@@ -102,8 +104,16 @@ function deleteImg(i) {
   fileList.splice(i, 1)
   binding()
 }
-function viewImg(i) {
-  console.log('view')
+function viewImg(e) {
+  console.log(
+    'view',
+    /**
+     * TODO 待优化
+     */
+    e.target.parentNode.parentNode.parentNode
+      .querySelector('.n-image img')
+      .click()
+  )
 }
 function onChange(e) {
   const files = e.target.files
@@ -149,8 +159,14 @@ defineExpose({
       :key="i"
       class="preview-img relative wh-80 br-8 overflow-hidden"
     >
-      <img class="wh-full" :src="img[urlFiled]" object-center object-cover />
+      <n-image
+        class="wh-full"
+        :src="img[urlFiled]"
+        object-center
+        object-cover
+      />
       <div
+        v-if="!disabled"
         :class="`preview-img__mark absolute t-0 l-0 flex-center gap-2 wh-full
         bg-00000055 text-fff`"
       >
@@ -158,7 +174,7 @@ defineExpose({
           class="cursor-pointer"
           icon="carbon:search"
           :size="16"
-          @click="viewImg(i)"
+          @click="viewImg"
         />
         <TheIcon
           class="cursor-pointer"

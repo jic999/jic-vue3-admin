@@ -16,27 +16,12 @@ const props = defineProps({
     default: undefined,
   },
 })
-/**
- * TODO 删改图片时 新增相应字段
- * keyDeleteList [{ id }]
- * keyUpdateList [{ id, file }]
- *  */
 
 /**
- * TODO 新增排除字段
- * exclude [ key ]
- * 被排除的字段不会被收集
- */
-
-/**
- * label
- * value
- * type
- * attrs
- * options
- * rule
+ * 单格根节点 $attrs自动继承
  */
 /**
+ * FormItem { label, value, type, attrs, options, rule, formItemAttrs }
  * 数字输入框 NumberInput
  * 字符输入框 Input
  * 开关 Switch
@@ -92,7 +77,7 @@ defineExpose({
     :rules="rules"
   >
     <template v-for="(item, key) in formItems" :key="key">
-      <n-form-item :label="item.label" :path="key">
+      <n-form-item :label="item.label" :path="key" v-bind="item.formItemAttrs">
         <template v-if="item.type === 'NumberInput'">
           <n-input-number
             v-model:value="formData[key]"
@@ -171,5 +156,3 @@ defineExpose({
     </template>
   </n-form>
 </template>
-
-<style lang="scss" scoped></style>

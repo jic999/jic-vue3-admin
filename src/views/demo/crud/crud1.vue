@@ -9,118 +9,7 @@ import useCrud from '@/hooks/useCrud'
 
 import userApi from '@/api/user.api'
 
-/* const formItems = reactive({
-  id: {
-    label: 'id',
-    value: 999,
-    type: 'NumberInput',
-    attrs: { placeholder: 'id', showButton: false },
-    rule: {
-      trigger: ['input', 'blur'],
-      required: true,
-      type: 'number',
-      message: '请输入id',
-    },
-  },
-  name: {
-    label: '姓名',
-    value: '',
-    type: 'Input',
-    attrs: { placeholder: '姓名' },
-    rule: {
-      trigger: 'blur',
-      required: true,
-      type: 'string',
-      message: '请输入姓名',
-    },
-  },
-  avatar: {
-    label: '头像',
-    value: {
-      url: 'https://th.bing.com/th/id/OIP.wos6Z7P5JxWct-In-pqUtAAAAA?pid=ImgDet&rs=1',
-    },
-    type: 'Image',
-    attrs: {},
-  },
-  hobby: {
-    label: '爱好',
-    value: '篮球',
-    type: 'Radio',
-    options: [
-      { label: '唱歌', value: '唱歌' },
-      { label: '跳舞', value: '跳舞' },
-      { label: '篮球', value: '篮球' },
-    ],
-  },
-  book: {
-    label: '书籍',
-    value: [false, false, false],
-    type: 'Checkbox',
-    options: ['孟子', '老子', '韩非子'], // [label]
-    rule: {
-      validator: (rule, value) => {
-        for (let i in value) if (value[i]) return
-        return new Error('请至少选中一项')
-      },
-    },
-  },
-  game: {
-    label: '游戏',
-    value: [],
-    type: 'CheckboxGroup',
-    options: [
-      { label: '英雄联盟', value: '英雄联盟' },
-      { label: '魔兽争霸', value: '魔兽争霸' },
-      { label: '骑马与砍杀', value: '骑马与砍杀' },
-      { label: '荒野大镖客', value: '荒野大镖客' },
-    ],
-  },
-  province: {
-    label: '省份',
-    value: '',
-    type: 'Select',
-    options: [
-      { label: '湖北', value: '湖北' },
-      { label: '湖南', value: '湖南' },
-      { label: '安徽', value: '安徽' },
-    ],
-  },
-  grade: {
-    label: '年级',
-    value: '',
-    type: 'Cascader',
-    attrs: { checkStrategy: 'child' },
-    options: [
-      {
-        label: '初中',
-        value: '初中',
-        options: [
-          { label: '初一', value: '初一' },
-          { label: '初二', value: '初二' },
-          { label: '初三', value: '初三' },
-        ],
-      },
-      {
-        label: '高中',
-        value: '高中',
-        options: [
-          { label: '高一', value: '高一' },
-          { label: '高二', value: '高二' },
-          { label: '高三', value: '高三' },
-        ],
-      },
-      {
-        label: '大学',
-        value: '大学',
-        options: [
-          { label: '大一', value: '大一' },
-          { label: '大二', value: '大二' },
-          { label: '大三', value: '大三' },
-        ],
-      },
-    ],
-  },
-}) */
+/* Form */
 const formItems = reactive({
   id: {
     label: 'id',
@@ -187,26 +76,57 @@ const formItems = reactive({
     attrs: { disabled: true, placeholder: '自动生成' },
   },
 })
+const excludeField = ['updateAt', 'createAt']
+
+const updateParamsHandler = (formData) => {
+  const formParams = new FormData()
+  const { avatar, ...params } = formData
+  for (let key in params) {
+    formParams.append(key, params[key])
+  }
+  if (_.isArray(avatar) && avatar[0].raw) {
+    console.log('append avatar')
+    formParams.append('avatar', avatar[0].oldUrl)
+    formParams.append('avatarFile', avatar[0].raw)
+  }
+  return formParams
+}
+const createParamsHandler = (formData) => {
+  const formParams = new FormData()
+  const { id, avatar, ...params } = formData
+  for (let key in params) {
+    formParams.append(key, params[key])
+  }
+  if (_.isArray(avatar) && avatar[0].raw) {
+    formParams.append('avatarFile', avatar[0].raw)
+  }
+  return formParams
+}
 
 const {
   formTitle,
   formAction,
   formVisible,
+  formLoading,
   ctrlFormItems,
   handleView,
   handleUpdate,
   handleCreate,
   handleDelete,
+  handleCommit,
   handleCancel,
   refresh,
+  $form,
 } = useCrud({
   title: '用户',
   formItems,
+  reqUpdate: userApi.reqUpdate,
+  reqCreate: userApi.reqCreate,
   reqDelete: userApi.reqDelete,
   refresh: () => $table.value.refresh(),
+  createParamsHandler: createParamsHandler,
+  updateParamsHandler: updateParamsHandler,
 })
-
-const formLoading = ref(false)
 
 const columns = [
   {
@@ -323,69 +243,17 @@ const columns = [
   },
 ]
 
-const $form = ref()
-
 const $table = ref()
-
-const excludeField = ['updateAt', 'createAt']
-function getUpdateParams(formData) {
-  const formParams = new FormData()
-  const { avatar, ...params } = formData
-  for (let key in params) {
-    formParams.append(key, params[key])
-  }
-  if (_.isArray(avatar) && avatar[0].raw) {
-    console.log('append avatar')
-    formParams.append('avatar', avatar[0].oldUrl)
-    formParams.append('avatarFile', avatar[0].raw)
-  }
-  return formParams
-}
-function getCreateParams(formData) {
-  const formParams = new FormData()
-  const { id, avatar, ...params } = formData
-  for (let key in params) {
-    formParams.append(key, params[key])
-  }
-  if (_.isArray(avatar) && avatar[0].raw) {
-    formParams.append('avatarFile', avatar[0].raw)
-  }
-  return formParams
-}
-
-async function handleCommit() {
-  const error = await $form.value.validate()
-  if (error) return
-  const formData = $form.value.getFormData()
-
-  const handler = {
-    create: () => userApi.reqCreate(getCreateParams(formData)),
-    update: () => userApi.reqUpdate(getUpdateParams(formData)),
-  }
-
-  try {
-    formLoading.value = true
-    const { code, data, msg } = await handler[formAction.value]()
-    if (code === 0) {
-      // 刷新
-      $message.success(msg)
-      refresh()
-    } else {
-      throw new Error(msg)
-    }
-  } catch (err) {
-    $message.error(err.message)
-  } finally {
-    formLoading.value = false
-    handleCancel()
-  }
-}
 
 const queryParams = ref({})
 
 /* 模态框 */
 const modalStyle = {
   width: '600px',
+  maxHeight: '98vh',
+}
+const modalBodyStyle = {
+  overflowY: 'auto',
 }
 const modalFooterStyle = {
   display: 'flex',
@@ -401,6 +269,7 @@ const modalFooterStyle = {
     preset="card"
     :style="modalStyle"
     :footer-style="modalFooterStyle"
+    :content-style="modalBodyStyle"
     :title="formTitle"
     size="huge"
     :auto-focus="false"

@@ -1,15 +1,27 @@
 import { ref, computed } from 'vue'
 
-const ACTIONS_title = {
+const ACTIONS_TEXT = {
   create: '新增',
   update: '更新',
   view: '查看',
 }
 
-export default function ({ title, formItems, reqDelete, refresh }) {
+export default function ({
+  title,
+  formItems,
+  reqCreate,
+  reqUpdate,
+  reqDelete,
+  refresh,
+  createParamsHandler = (params) => params,
+  updateParamsHandler = (params) => params,
+}) {
+  const formTitle = computed(() => ACTIONS_TEXT[formAction.value] + title)
   const formAction = ref('')
   const formVisible = ref(false)
-  const formTitle = computed(() => ACTIONS_title[formAction.value] + title)
+  const formLoading = ref(false)
+
+  const $form = ref()
 
   const ctrlFormItems = ref(formItems)
 
@@ -50,6 +62,28 @@ export default function ({ title, formItems, reqDelete, refresh }) {
       },
     })
   }
+  async function handleCommit() {
+    if (formAction.value === 'view') return handleCancel()
+    const error = await $form.value?.validate()
+    if (error) return
+    const formData = $form.value.getFormData()
+    const handler = {
+      create: () => reqCreate(createParamsHandler(formData)),
+      update: () => reqUpdate(updateParamsHandler(formData)),
+    }
+    try {
+      formLoading.value = true
+      const { code, msg } = await handler[formAction.value]()
+      if (code !== 0) throw new Error(msg)
+      $message.success(msg)
+      refresh()
+      handleCancel()
+    } catch (err) {
+      $message.error(err.message || '提交失败，请稍后再试')
+    } finally {
+      formLoading.value = false
+    }
+  }
   function handleCancel() {
     formVisible.value = false
   }
@@ -73,12 +107,15 @@ export default function ({ title, formItems, reqDelete, refresh }) {
     formTitle,
     formAction,
     formVisible,
+    formLoading,
     ctrlFormItems,
+    refresh,
+    $form,
     handleView,
     handleCreate,
     handleUpdate,
     handleDelete,
+    handleCommit,
     handleCancel,
-    refresh,
   }
 }
