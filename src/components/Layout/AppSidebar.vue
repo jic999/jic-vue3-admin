@@ -48,14 +48,16 @@ const defaultActive = ref(route.name)
 <template>
   <a
     class="flex-center text-center mt-24 mb-12 text-16 italic whitespace-nowrap"
+    style="color: var(--primary-c)"
     href="#"
   >
-    <TheIcon icon="ep:apple" :size="24" color="currentColor" />
-    <snap v-if="!appStore.collapsed" ml-4>Vue3 Naive Admin</snap>
+    <TheIcon icon="ep:apple" :size="24" />
+    <span v-if="!appStore.collapsed" ml-4 font-600>Vue3 Naive Admin</span>
   </a>
   <n-menu
     :options="menuOptions"
     :value="defaultActive"
+    :indent="12"
     @update:value="handleChangeMenu"
   />
 </template>

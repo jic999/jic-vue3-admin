@@ -17,11 +17,12 @@ const contentStyle = {
   <n-layout position="absolute" has-sider>
     <n-layout-sider
       bordered
-      content-style="padding: 0 12px;"
+      content-style="padding: 0 6px;"
       :native-scrollbar="false"
       :collapsed="appStore.collapsed"
       collapse-mode="width"
-      :collapsed-width="72"
+      :width="216"
+      :collapsed-width="60"
       h-100vh
     >
       <AppSidebar />

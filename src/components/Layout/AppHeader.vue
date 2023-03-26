@@ -34,7 +34,7 @@ function handleSelect(key) {
 </script>
 
 <template>
-  <div flex justify-between items-center h-60 px-24>
+  <div flex justify-between items-center h-60 px-24 text-gray-5>
     <div>
       <TheIcon
         v-if="collapsed"
@@ -52,7 +52,7 @@ function handleSelect(key) {
       />
     </div>
     <div>
-      <div flex items-center gap-8 text-16>
+      <div flex items-center gap-12 text-16>
         <span hover:text-primary hover:cursor-pointer>
           {{ userInfo.username || '未登录' }}
         </span>
@@ -62,7 +62,12 @@ function handleSelect(key) {
           @select="handleSelect"
         >
           <img v-if="userInfo.avatar" :src="userInfo.avatar" wh-36 circle />
-          <TheIcon v-else icon="carbon:user-avatar" :size="36" color="#999" />
+          <TheIcon
+            v-else
+            icon="carbon:user-avatar"
+            :size="36"
+            color="currentColor"
+          />
         </n-dropdown>
       </div>
     </div>
