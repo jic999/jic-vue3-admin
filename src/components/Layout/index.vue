@@ -40,7 +40,7 @@ const contentStyle = {
           :content-style="contentStyle"
           :native-scrollbar="false"
         >
-          <div bg-fff p-24 br-12>
+          <div bg-fff p-18 br-12>
             <RouterView />
           </div>
         </n-layout-content>

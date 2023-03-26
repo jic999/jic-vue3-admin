@@ -42,7 +42,7 @@ function handleChangeMenu(key) {
   router.push({ name: key })
   defaultActive.value = key
 }
-const defaultActive = ref(route.name)
+const defaultActive = computed(() => route.name)
 </script>
 
 <template>

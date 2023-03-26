@@ -16,13 +16,16 @@ export default {
       name: 'Component',
       component: () => import('./component/index.vue'),
       meta: {
+        title: '组件展示',
         icon: 'carbon:3d-mpr-toggle',
       },
     },
     {
       path: 'crud',
       name: 'Crud',
+      redirect: 'crud1',
       meta: {
+        title: 'Crud',
         icon: 'carbon:data-table',
       },
       children: [
@@ -31,6 +34,7 @@ export default {
           name: 'Crud1',
           component: () => import('./crud/crud1.vue'),
           meta: {
+            title: 'CRUD',
             icon: 'carbon:code',
           },
         },
@@ -39,6 +43,7 @@ export default {
           name: 'Crud2',
           component: () => import('./crud/crud2.vue'),
           meta: {
+            title: 'SMART_CRUD',
             icon: 'carbon:code',
           },
         },

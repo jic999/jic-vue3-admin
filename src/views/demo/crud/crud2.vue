@@ -76,7 +76,7 @@ const columns = [
   {
     title: 'id',
     key: 'id',
-    width: 100,
+    width: 80,
   },
   {
     title: '用户名',
@@ -87,7 +87,7 @@ const columns = [
   {
     title: '头像',
     key: 'avatar',
-    width: 100,
+    width: 60,
     render(row) {
       if (row.avatar) return h('img', { src: row.avatar, class: 'wh-36' })
       else return h('span', {}, '无')
@@ -102,23 +102,23 @@ const columns = [
   {
     title: '是否vip',
     key: 'isVip',
-    width: 100,
+    width: 60,
     render(row) {
-      return h(NSwitch, { value: row.isVip === 1 })
+      return h(NSwitch, { value: row.isVip === 1, size: 'small' })
     },
   },
   {
     title: '用户类型',
     key: 'type',
-    width: 150,
+    width: 120,
     render(row) {
       const text = {
         0: '普通用户',
         1: '管理员',
       }
       const style = {
-        0: { backgroundColor: 'inherit' },
-        1: { backgroundColor: '#18a058', color: '#fff' },
+        0: { color: 'inherit' },
+        1: { color: 'var(--primary-c)', fontWeight: 600 },
       }
       return h(
         'span',
@@ -130,14 +130,15 @@ const columns = [
   {
     title: '状态',
     key: 'status',
-    width: 120,
+    width: 60,
     render(row) {
-      return h(NSwitch, { value: row.status === 0 })
+      return h(NSwitch, { value: row.status === 0, size: 'small' })
     },
   },
   {
     title: '创建时间',
     key: 'createAt',
+    width: 150,
     render(row) {
       const time = new Date(row.createAt)
       return h('span', {}, time.toLocaleString())
@@ -146,6 +147,7 @@ const columns = [
   {
     title: '更新时间',
     key: 'updateAt',
+    width: 150,
     render(row) {
       const time = new Date(row.updateAt)
       return h('span', {}, time.toLocaleString())
@@ -179,7 +181,7 @@ const createParamsHandler = (formData) => {
 }
 
 const tableAttrs = {
-  scrollX: 1500,
+  scrollX: 1200,
 }
 </script>
 

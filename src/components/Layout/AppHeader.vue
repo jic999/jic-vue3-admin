@@ -1,26 +1,39 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import TheIcon from '@/components/Icon/TheIcon.vue'
+import { renderCustomIcon, renderIcon } from '@/utils/icon'
 import { useUserStore } from '@/stores'
 import TagBar from './components/TagBar.vue'
-import { computed } from 'vue'
 import _ from 'lodash'
 
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
+/* Toggle Sidebar */
 const appStore = useAppStore()
 
 const { collapsed } = storeToRefs(appStore)
 const { toggleSidebar } = appStore
 
-console.log(collapsed, toggleSidebar)
+/* BreadCrumb */
+function handleBreadClick(path) {
+  if (path === route.path) return
+  router.push(path)
+}
+
+function getIcon(meta) {
+  if (meta?.customIcon) return renderCustomIcon(meta.customIcon, { size: 16 })
+  if (meta?.icon) return renderIcon(meta.icon, { size: 16 })
+  return null
+}
+
+/* UserInfo */
 const { userInfo, logout } = useUserStore()
-const isLogin = computed(() => !_.isEmpty(userInfo))
 
 const userOptions = [{ label: '退出登录', key: 'logout' }]
 
 const router = useRouter()
+const route = useRoute()
 
 function handleSelect(key) {
   const handler = {
@@ -35,23 +48,32 @@ function handleSelect(key) {
 
 <template>
   <div flex justify-between items-center h-60 px-24 text-gray-5>
-    <div>
+    <!-- Left-->
+    <div flex items-center>
+      <!-- Toggle Sidebar -->
       <TheIcon
-        v-if="collapsed"
         class="icon-btn"
-        icon="ep:expand"
-        :size="20"
+        :icon="collapsed ? 'ep:expand' : 'ep:fold'"
+        :size="22"
         @click="toggleSidebar"
       />
-      <TheIcon
-        v-else
-        class="icon-btn"
-        icon="ep:fold"
-        :size="20"
-        @click="toggleSidebar"
-      />
+      <!-- BreadCrumb -->
+      <div ml-12 pl-12 border-l-2>
+        <n-breadcrumb>
+          <n-breadcrumb-item
+            v-for="item in route.matched.filter((item) => !!item.meta?.title)"
+            :key="item.path"
+            @click="handleBreadClick(item.path)"
+          >
+            <component :is="getIcon(item.meta)" />
+            {{ item.meta.title }}
+          </n-breadcrumb-item>
+        </n-breadcrumb>
+      </div>
     </div>
+    <!-- Right -->
     <div>
+      <!-- UserInfo -->
       <div flex items-center gap-12 text-16>
         <span hover:text-primary hover:cursor-pointer>
           {{ userInfo.username || '未登录' }}

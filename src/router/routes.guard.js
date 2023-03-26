@@ -27,6 +27,15 @@ export function authGuard(router) {
   })
 }
 
+function changeTitleGuard(router) {
+  router.beforeEach((to) => {
+    const title = to.meta?.title
+    if (title) document.title = title
+    else document.title = 'Vue3 Naive Admin'
+  })
+}
+
 export function createGuard(router) {
   authGuard(router)
+  changeTitleGuard(router)
 }

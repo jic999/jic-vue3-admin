@@ -13,7 +13,8 @@ onMounted(() => {
 
 <template>
   <h1>Home</h1>
-  <TheIcon icon="carbon:3d-cursor" :size="20" />
+  <p text-20>这是一个基于Vue3 + Vite + NaiveUI 的后台管理模板</p>
+  <p text-20>目前还在完善中</p>
 </template>
 
 <style lang="scss" scoped></style>
