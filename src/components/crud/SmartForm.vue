@@ -11,7 +11,22 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  excludes: {
+    type: Array,
+    default: undefined,
+  },
 })
+/**
+ * TODO 删改图片时 新增相应字段
+ * keyDeleteList [{ id }]
+ * keyUpdateList [{ id, file }]
+ *  */
+
+/**
+ * TODO 新增排除字段
+ * exclude [ key ]
+ * 被排除的字段不会被收集
+ */
 
 /**
  * label
@@ -35,12 +50,22 @@ const props = defineProps({
 const $form = ref()
 
 const formData = reactive(transForm())
+
 function transForm() {
   const newForm = {}
   for (let key in props.formItems) {
     newForm[key] = props.formItems[key].value
   }
   return newForm
+}
+function getFormData() {
+  const result = props.excludes ? {} : formData
+  if (props.excludes) {
+    for (let key in formData) {
+      if (!props.excludes.includes(key)) result[key] = formData[key]
+    }
+  }
+  return result
 }
 
 const rules = computed(() => {
@@ -53,6 +78,7 @@ const rules = computed(() => {
 
 defineExpose({
   validate: () => $form.value.validate(),
+  getFormData,
 })
 </script>
 

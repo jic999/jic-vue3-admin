@@ -3,10 +3,10 @@ import { useRouter } from 'vue-router'
 import TheIcon from '@/components/Icon/TheIcon.vue'
 import { useUserStore } from '@/stores/user'
 import { computed } from 'vue'
-import { isEmptyObj } from '@/utils/is'
+import _ from 'lodash'
 
 const { userInfo, logout } = useUserStore()
-const isLogin = computed(() => !isEmptyObj(userInfo))
+const isLogin = computed(() => !_.isEmpty(userInfo))
 
 const userOptions = [{ label: '退出登录', key: 'logout' }]
 
@@ -25,7 +25,7 @@ function handleSelect(key) {
 
 <template>
   <div flex justify-between items-center h-60 px-48>
-    <div>1</div>
+    <div>Header</div>
     <div>
       <div flex items-center gap-8>
         <span hover:text-primary hover:cursor-pointer>
@@ -36,12 +36,7 @@ function handleSelect(key) {
           :options="userOptions"
           @select="handleSelect"
         >
-          <img
-            v-if="userInfo.avatarUrl"
-            :src="userInfo.avatarUrl"
-            wh-36
-            circle
-          />
+          <img v-if="userInfo.avatar" :src="userInfo.avatar" wh-36 circle />
           <TheIcon v-else icon="carbon:user-avatar" :size="36" color="#999" />
         </n-dropdown>
       </div>

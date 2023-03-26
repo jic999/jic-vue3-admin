@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { lStorage } from '@/utils/storage'
-import userApi from '@/api/user'
+import userApi from '@/api/user.api'
 
 export const useUserStore = defineStore('user', () => {
   const userInfo = ref({})
@@ -17,15 +17,19 @@ export const useUserStore = defineStore('user', () => {
   }
   async function tokenLogin() {
     return new Promise(async (resolve, reject) => {
-      const data = await userApi.reqAuth()
-      if (data.code !== 0) {
-        // 失败 清除登录信息
-        logout()
-        reject(data)
-      } else {
-        // 成功 记录登录状态
-        setUserInfo(data.data)
-        resolve(data)
+      try {
+        const data = await userApi.reqAuth()
+        if (data.code !== 0) {
+          // 失败 清除登录信息
+          logout()
+          reject(data)
+        } else {
+          // 成功 记录登录状态
+          setUserInfo(data.data)
+          resolve(data)
+        }
+      } catch (error) {
+        reject(error)
       }
     })
   }

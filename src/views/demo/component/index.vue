@@ -1,5 +1,7 @@
 <script setup name="ComponentDemo">
+import _ from 'lodash'
 import SmartUpload from '@/components/crud/SmartUpload.vue'
+import { analyzeFileChange } from '@/components/crud/utils/upload.js'
 import { reactive, ref, watch } from 'vue'
 
 // const list = ref([])
@@ -22,8 +24,20 @@ const list = [
   },
 ]
 
+const listBackup = _.cloneDeep(list)
+
+console.log('listBackup', listBackup)
+
 function log() {
-  console.log($upload.value.getFileList())
+  const newList = $upload.value.getFileList()
+  const { createList, updateList, deleteList, fileList } = analyzeFileChange(
+    listBackup,
+    newList
+  )
+  console.log('fileList', fileList)
+  console.log('createList', createList)
+  console.log('updateList', updateList)
+  console.log('deleteList', deleteList)
 }
 </script>
 

@@ -1,15 +1,15 @@
 import { ref, computed } from 'vue'
 
-const ACTIONS_NAME = {
+const ACTIONS_title = {
   create: '新增',
   update: '更新',
   view: '查看',
 }
 
-export default function ({ name, formItems }) {
+export default function ({ title, formItems, reqDelete, refresh }) {
   const formAction = ref('')
   const formVisible = ref(false)
-  const formTitle = computed(() => ACTIONS_NAME[formAction.value] + name)
+  const formTitle = computed(() => ACTIONS_title[formAction.value] + title)
 
   const ctrlFormItems = ref(formItems)
 
@@ -27,6 +27,28 @@ export default function ({ name, formItems }) {
     formAction.value = 'create'
     formVisible.value = true
     initFormValue()
+  }
+  function handleDelete(id) {
+    $dialog.warning({
+      title: `删除${title}`,
+      content: `确认删除？`,
+      positiveText: '确认',
+      negativeText: '取消',
+      autoFocus: false,
+      onPositiveClick: async () => {
+        const msgLoading = $message.loading('删除中', { duration: 0 })
+        try {
+          const { code, msg } = await reqDelete(id)
+          if (code !== 0) throw new Error(msg)
+          $message.success('删除成功')
+          refresh()
+        } catch (err) {
+          $message.error(err.message || '删除失败，请稍后再试')
+        } finally {
+          msgLoading.destroy()
+        }
+      },
+    })
   }
   function handleCancel() {
     formVisible.value = false
@@ -55,6 +77,8 @@ export default function ({ name, formItems }) {
     handleView,
     handleCreate,
     handleUpdate,
+    handleDelete,
     handleCancel,
+    refresh,
   }
 }

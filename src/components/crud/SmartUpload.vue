@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, ref, nextTick, computed } from 'vue'
 import TheIcon from '@/components/icon/TheIcon.vue'
-import { isArray, isEmptyObj, isObject, isString } from '@/utils/is'
+import _ from 'lodash'
 
 // TODO 限制文件大小、类型
 const props = defineProps({
@@ -21,8 +21,6 @@ const props = defineProps({
     type: Number,
     default: 1,
   },
-  // TODO 已有图片预览
-  // 先转为MyImage 再加入fileList
   files: {
     type: Array,
     default: undefined,
@@ -56,15 +54,20 @@ const fileList = reactive([])
 if (props.files || props.modelValue) {
   transFiles()
 }
+
+/**
+ * 已有图片预览
+ * 先转为MyImage 再加入fileList
+ */
 function transFiles() {
   const tmp = props.files || props.modelValue
-  if (isArray(tmp)) {
-    arr.forEach((img) => {
+  if (_.isArray(tmp) && tmp.length > 0) {
+    tmp.forEach((img) => {
       fileList.push(img)
     })
-  } else if (isObject(tmp) && !isEmptyObj(tmp)) {
+  } else if (_.isObject(tmp) && !_.isEmpty(tmp)) {
     fileList.push(tmp)
-  } else if (isString(tmp)) {
+  } else if (_.isString(tmp)) {
     const myImage = {}
     myImage[props.urlFiled] = tmp
     fileList.push(myImage)
@@ -122,7 +125,12 @@ function onChange(e) {
       }
     },
     update() {
-      fileList.splice(currentIndex, 1, createImage(files[0]))
+      // 添加到对应项
+      Object.assign(fileList[currentIndex], {
+        ...createImage(files[0]),
+        oldUrl: fileList[currentIndex].url,
+      })
+      // fileList.splice(currentIndex, 1, createImage(files[0]))
     },
   }
   handlers[action.value]()

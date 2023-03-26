@@ -2,7 +2,7 @@
 import { onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
-import userApi from '@/api/user'
+import userApi from '@/api/user.api'
 import { lStorage } from '@/utils/storage'
 import { useUserStore } from '@/stores/user'
 
@@ -26,7 +26,7 @@ async function handleLogin() {
     router.push('/')
     $message.success('登录成功')
   } catch (error) {
-    $message.error(error.message)
+    $message.error(error.message || '登陆失败，请稍后再试')
   } finally {
     loadingMsg.destroy()
   }
@@ -62,6 +62,7 @@ onMounted(() => {
         class="w-full mb-16 p-8 bg-f2f2f2"
         type="password"
         placeholder="密码"
+        @keydown.enter="handleLogin"
       />
       <n-button type="primary" w-full @click="handleLogin">登录</n-button>
     </div>

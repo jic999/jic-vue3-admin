@@ -1,12 +1,13 @@
 <script setup>
 import { h, reactive, ref } from 'vue'
 import { NButton, NSwitch } from 'naive-ui'
+import _ from 'lodash'
 import { renderIcon } from '@/utils/icon'
 import SmartTable from '@/components/crud/SmartTable.vue'
 import SmartForm from '@/components/crud/SmartForm.vue'
 import useCrud from '@/hooks/useCrud'
 
-import userApi from '@/api/user'
+import userApi from '@/api/user.api'
 
 /* const formItems = reactive({
   id: {
@@ -131,11 +132,14 @@ const formItems = reactive({
     label: '用户名',
     value: null,
     type: 'Input',
+    rule: {
+      required: true,
+      type: 'string',
+    },
   },
-  avatarUrl: {
+  avatar: {
     label: '头像',
-    value:
-      'https://th.bing.com/th/id/OIP.wos6Z7P5JxWct-In-pqUtAAAAA?pid=ImgDet&rs=1',
+    value: [],
     type: 'Image',
   },
   email: {
@@ -145,8 +149,12 @@ const formItems = reactive({
   },
   isVip: {
     label: '是否vip',
-    value: false,
-    type: 'Switch',
+    value: 0,
+    type: 'Radio',
+    options: [
+      { label: '否', value: 0 },
+      { label: '是', value: 1 },
+    ],
   },
   type: {
     label: '用户类型',
@@ -163,7 +171,7 @@ const formItems = reactive({
     type: 'Radio',
     options: [
       { label: '正常', value: 0 },
-      { label: '禁用', vlaue: -1 },
+      { label: '禁用', value: -1 },
     ],
   },
   createAt: {
@@ -188,11 +196,18 @@ const {
   handleView,
   handleUpdate,
   handleCreate,
+  handleDelete,
   handleCancel,
+  refresh,
 } = useCrud({
-  name: '用户',
+  title: '用户',
   formItems,
+  reqDelete: userApi.reqDelete,
+  refresh: () => $table.value.refresh(),
 })
+
+const formLoading = ref(false)
+
 const columns = [
   {
     title: 'id',
@@ -207,10 +222,10 @@ const columns = [
   },
   {
     title: '头像',
-    key: 'avatarUrl',
+    key: 'avatar',
     width: 100,
     render(row) {
-      if (row.avatarUrl) return h('img', { src: row.avatarUrl, class: 'wh-36' })
+      if (row.avatar) return h('img', { src: row.avatar, class: 'wh-36' })
       else return h('span', {}, '无')
     },
   },
@@ -238,7 +253,7 @@ const columns = [
         1: '管理员',
       }
       const style = {
-        0: { backgroundColor: '#e2e2e2' },
+        0: { backgroundColor: 'inherit' },
         1: { backgroundColor: '#18a058', color: '#fff' },
       }
       return h(
@@ -284,7 +299,7 @@ const columns = [
           { type: 'primary', size: 'tiny', onClick: () => handleView(row) },
           {
             default: () => '查看',
-            icon: renderIcon('carbon:view', { side: 14 }),
+            icon: renderIcon('carbon:view', { size: 14 }),
           }
         ),
         h(
@@ -292,15 +307,15 @@ const columns = [
           { type: 'default', size: 'tiny', onClick: () => handleUpdate(row) },
           {
             default: () => '编辑',
-            icon: renderIcon('carbon:edit', { side: 14 }),
+            icon: renderIcon('carbon:edit', { size: 14 }),
           }
         ),
         h(
           NButton,
-          { type: 'error', size: 'tiny' },
+          { type: 'error', size: 'tiny', onClick: () => handleDelete(row.id) },
           {
             default: () => '删除',
-            icon: renderIcon('carbon:trash-can', { side: 14 }),
+            icon: renderIcon('carbon:trash-can', { size: 14 }),
           }
         ),
       ])
@@ -308,16 +323,67 @@ const columns = [
   },
 ]
 
-// TODO SmartTable
-// 增删改查 分页
+const $form = ref()
 
-userApi.reqList().then((res) => {
-  console.log(res)
-})
+const $table = ref()
+
+const excludeField = ['updateAt', 'createAt']
+function getUpdateParams(formData) {
+  const formParams = new FormData()
+  const { avatar, ...params } = formData
+  for (let key in params) {
+    formParams.append(key, params[key])
+  }
+  if (_.isArray(avatar) && avatar[0].raw) {
+    console.log('append avatar')
+    formParams.append('avatar', avatar[0].oldUrl)
+    formParams.append('avatarFile', avatar[0].raw)
+  }
+  return formParams
+}
+function getCreateParams(formData) {
+  const formParams = new FormData()
+  const { id, avatar, ...params } = formData
+  for (let key in params) {
+    formParams.append(key, params[key])
+  }
+  if (_.isArray(avatar) && avatar[0].raw) {
+    formParams.append('avatarFile', avatar[0].raw)
+  }
+  return formParams
+}
+
+async function handleCommit() {
+  const error = await $form.value.validate()
+  if (error) return
+  const formData = $form.value.getFormData()
+
+  const handler = {
+    create: () => userApi.reqCreate(getCreateParams(formData)),
+    update: () => userApi.reqUpdate(getUpdateParams(formData)),
+  }
+
+  try {
+    formLoading.value = true
+    const { code, data, msg } = await handler[formAction.value]()
+    if (code === 0) {
+      // 刷新
+      $message.success(msg)
+      refresh()
+    } else {
+      throw new Error(msg)
+    }
+  } catch (err) {
+    $message.error(err.message)
+  } finally {
+    formLoading.value = false
+    handleCancel()
+  }
+}
+
+const queryParams = ref({})
 
 /* 模态框 */
-const modalVisible = ref(false)
-
 const modalStyle = {
   width: '600px',
 }
@@ -326,24 +392,9 @@ const modalFooterStyle = {
   justifyContent: 'end',
   gap: '0 16px',
 }
-function handleCommit() {
-  $message.success('提交成功')
-}
-
-/**
- * useCrud
- *
- * handleView
- *  将对应行的值 赋给 formItems 禁止表单输入 显示模态框
- * handleUpdate
- * handleCreate
- * handleDelete
- */
 </script>
 
 <template>
-  <h1>Crud1</h1>
-  <n-button @click="handleCreate">Create</n-button>
   <n-modal
     v-model:show="formVisible"
     class="custom-card"
@@ -355,18 +406,62 @@ function handleCommit() {
     :auto-focus="false"
     :bordered="false"
   >
-    <SmartForm :form-items="ctrlFormItems" :disabled="formAction === 'view'" />
+    <SmartForm
+      ref="$form"
+      :form-items="ctrlFormItems"
+      :disabled="formAction === 'view'"
+      :excludes="excludeField"
+    />
     <template #footer>
       <n-button @click="handleCancel">取消</n-button>
-      <n-button type="primary" @click="handleCommit">提交</n-button>
+      <n-button type="primary" :loading="formLoading" @click="handleCommit">
+        提交
+      </n-button>
     </template>
   </n-modal>
   <SmartTable
+    ref="$table"
+    v-model:query-params="queryParams"
     :columns="columns"
-    :get-data="userApi.reqList"
+    :get-data="userApi.reqPage"
+    title="用户"
+    is-pagination
     :scroll-x="1500"
     bordered
-  />
+  >
+    <template #queryBar>
+      <div flex justify-between py-20>
+        <div flex gap-12>
+          <n-input
+            v-model:value="queryParams.username"
+            type="text"
+            placeholder="请输入用户名"
+            @keydown.enter="() => $table.handleSearch()"
+          />
+          <n-button type="primary" @click="() => $table.handleSearch()">
+            <template #icon>
+              <TheIcon icon="carbon:search" />
+            </template>
+            搜索
+          </n-button>
+          <n-button secondary @click="() => $table.handleReset()">
+            <template #icon>
+              <TheIcon icon="carbon:reset" />
+            </template>
+            重置
+          </n-button>
+        </div>
+        <div>
+          <n-button type="primary" secondary @click="handleCreate">
+            <template #icon>
+              <TheIcon icon="carbon:add" :size="14" />
+            </template>
+            新增用户
+          </n-button>
+        </div>
+      </div>
+    </template>
+  </SmartTable>
 </template>
 
 <style lang="scss" scoped></style>

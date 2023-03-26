@@ -1,6 +1,13 @@
 <script setup name="AppProvider">
 import { defineComponent, h } from 'vue'
-import { useLoadingBar, useDialog, useMessage, useNotification } from 'naive-ui'
+import {
+  useLoadingBar,
+  useDialog,
+  useMessage,
+  useNotification,
+  zhCN,
+  dateZhCN,
+} from 'naive-ui'
 
 const themeOverrides = {
   common: {
@@ -30,7 +37,11 @@ const NaiveProviderContent = defineComponent({
 </script>
 
 <template>
-  <n-config-provider :theme-overrides="themeOverrides">
+  <n-config-provider
+    :theme-overrides="themeOverrides"
+    :locale="zhCN"
+    :date-locale="dateZhCN"
+  >
     <n-loading-bar-provider>
       <n-dialog-provider>
         <n-notification-provider>
