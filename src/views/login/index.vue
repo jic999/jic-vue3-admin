@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 
 import userApi from '@/api/user.api'
 import { lStorage } from '@/utils/storage'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores'
 
 const { setUserInfo, tokenLogin } = useUserStore()
 

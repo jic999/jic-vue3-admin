@@ -1,4 +1,4 @@
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores'
 import { lStorage } from '@/utils/storage'
 
 const WHITE_LIST_PAGE = ['/login']

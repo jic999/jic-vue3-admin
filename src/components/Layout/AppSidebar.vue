@@ -3,6 +3,10 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { renderIcon, renderCustomIcon } from '@/utils/icon'
 
+import { useAppStore } from '@/stores'
+
+const appStore = useAppStore()
+
 const route = useRoute()
 const router = useRouter()
 
@@ -42,7 +46,13 @@ const defaultActive = ref(route.name)
 </script>
 
 <template>
-  <a href="#" text-center pt-20 pb-12 text-18 italic>Vue3 Naive Admin</a>
+  <a
+    class="flex-center text-center mt-24 mb-12 text-16 italic whitespace-nowrap"
+    href="#"
+  >
+    <TheIcon icon="ep:apple" :size="24" color="currentColor" />
+    <snap v-if="!appStore.collapsed" ml-4>Vue3 Naive Admin</snap>
+  </a>
   <n-menu
     :options="menuOptions"
     :value="defaultActive"

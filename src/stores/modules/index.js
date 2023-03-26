@@ -1,3 +1,4 @@
+export * from './app'
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { lStorage } from '@/utils/storage'
