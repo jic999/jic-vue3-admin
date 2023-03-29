@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { renderIcon, renderCustomIcon } from '@/utils/icon'
 
@@ -24,10 +23,10 @@ function getMenuItem(route) {
     icon: getIcon(route.meta),
   }
   if (!route.children) return menuItem
-  if (route.isSingle)
+  if (route.isSingle || route.childrenHidden)
     return {
       ...menuItem,
-      key: route.children[0].name,
+      key: route.isSingle ? route.children[0].name : route.name,
     }
   menuItem.children = route.children.map((item) => getMenuItem(item))
   return menuItem
@@ -42,7 +41,11 @@ function handleChangeMenu(key) {
   router.push({ name: key })
   defaultActive.value = key
 }
-const defaultActive = computed(() => route.name)
+// 配合路由
+const defaultActive = computed({
+  get: () => route.meta?.parent || route.name,
+  set: (name) => name,
+})
 </script>
 
 <template>

@@ -14,14 +14,14 @@ export function analyzeFileChange(list, newList) {
   })
   idList.forEach((item, i) => {
     if (item) {
-      const { id, url } = list[i]
-      deleteList.push({ id, url })
+      const { id } = list[i]
+      deleteList.push({ id })
     }
   })
-  rawItemList.forEach(({ id, raw, oldUrl }, i) => {
+  rawItemList.forEach(({ id, raw }, i) => {
     fileList.push(raw)
     // 同时包含 id 和 raw 即为更新项
-    if (id && raw) updateList.push({ id, index: i, url: oldUrl })
+    if (id && raw) updateList.push({ id, index: i })
     // 仅包含 raw 即为新增项
     if (!id && raw) createList.push({ index: i })
   })

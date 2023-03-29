@@ -48,7 +48,7 @@ onMounted(() => {
     <div
       :class="`
         flex justify-center flex-wrap w-320 mx-auto py-24 px-48
-        border shadow-xl -translate-y-42%`"
+        bg-fff border shadow-xl -translate-y-42%`"
     >
       <h3 text-primary>Vue3 Naive Admin</h3>
       <input

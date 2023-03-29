@@ -39,6 +39,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  imgStyle: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 const $emits = defineEmits(['update:modelValue'])
 
@@ -51,35 +55,34 @@ function createImage(file) {
 
 const $upload = ref()
 
-const fileList = reactive([])
+const previewList = computed(() =>
+  formatFileList(props.modelValue || props.files)
+)
 
-if (props.files || props.modelValue) {
-  transFiles()
-}
+const fileList = reactive(previewList.value)
 
 /**
  * 已有图片预览
- * 先转为MyImage 再加入fileList
+ * ImageItem 再加入fileList
  */
-function transFiles() {
-  const tmp = props.files || props.modelValue
-  if (_.isArray(tmp) && tmp.length > 0) {
-    tmp.forEach((img) => {
-      fileList.push(img)
-    })
-  } else if (_.isObject(tmp) && !_.isEmpty(tmp)) {
-    fileList.push(tmp)
-  } else if (_.isString(tmp)) {
-    const myImage = {}
-    myImage[props.urlFiled] = tmp
-    fileList.push(myImage)
+function formatFileList(files) {
+  if (_.isArray(files) && files.length > 0) return [...files]
+  if (_.isObject(files) && !_.isEmpty(files)) return files
+  if (_.isString(files)) {
+    const imageItem = {}
+    imageItem[props.urlFiled] = files
+    return [imageItem]
   }
+  return []
 }
 
 const action = ref('add') // add | update
 
 const disabledAdd = computed(
-  () => fileList.length >= props.limit || props.disabled
+  () =>
+    previewList.value.length >= props.limit ||
+    fileList.length > props.limit ||
+    props.disabled
 )
 const allowMultiple = computed(
   () => props.multiple && action.value !== 'update' && props.limit > 1
@@ -94,6 +97,7 @@ function addImg() {
 let currentIndex = -1
 function binding() {
   props.modelValue && $emits('update:modelValue', fileList)
+  console.log(fileList, props.modelValue)
 }
 function updateImg(i) {
   currentIndex = i
@@ -104,16 +108,12 @@ function deleteImg(i) {
   fileList.splice(i, 1)
   binding()
 }
-function viewImg(e) {
-  console.log(
-    'view',
-    /**
-     * TODO 待优化
-     */
-    e.target.parentNode.parentNode.parentNode
-      .querySelector('.n-image img')
-      .click()
-  )
+const $fileList = ref()
+function viewImg(i) {
+  /**
+   * TODO 待优化
+   */
+  $fileList.value[i].querySelector('img').click()
 }
 function onChange(e) {
   const files = e.target.files
@@ -147,6 +147,19 @@ function onChange(e) {
   binding()
 }
 
+const imgStyle = computed(() => ({
+  width: 100,
+  height: 100,
+  objectFit: 'contain',
+  objectPosition: 'center',
+  ...props.imgStyle,
+}))
+
+const iconSize = computed(() => {
+  const size = imgStyle.value.width / 8
+  return size > 16 ? size : 16
+})
+
 defineExpose({
   getFileList: () => fileList,
 })
@@ -155,38 +168,35 @@ defineExpose({
 <template>
   <div flex flex-wrap gap-8>
     <div
-      v-for="(img, i) in fileList"
+      v-for="(img, i) in previewList.length > 0 ? previewList : fileList"
+      ref="$fileList"
       :key="i"
-      class="preview-img relative wh-80 br-8 overflow-hidden"
+      class="preview-img relative br-8 overflow-hidden"
+      :style="{ width: imgStyle.width, height: imgStyle.height }"
     >
-      <n-image
-        class="wh-full"
-        :src="img[urlFiled]"
-        object-center
-        object-cover
-      />
+      <n-image class="wh-full" :src="img[urlFiled]" v-bind="imgStyle" border />
       <div
         v-if="!disabled"
-        :class="`preview-img__mark absolute t-0 l-0 flex-center gap-2 wh-full
-        bg-00000055 text-fff`"
+        :class="`preview-img__mark absolute t-0 l-0 flex-center gap-4 wh-full
+        bg-00000054 text-gray-3`"
       >
         <TheIcon
-          class="cursor-pointer"
+          class="action-icon cursor-pointer"
           icon="carbon:search"
-          :size="16"
-          @click="viewImg"
+          :size="iconSize"
+          @click.stop="viewImg(i)"
         />
         <TheIcon
-          class="cursor-pointer"
+          class="action-icon cursor-pointer"
           icon="carbon:edit"
-          :size="16"
-          @click="updateImg(i)"
+          :size="iconSize"
+          @click.stop="updateImg(i)"
         />
         <TheIcon
-          class="cursor-pointer"
+          class="action-icon cursor-pointer"
           icon="carbon:trash-can"
-          :size="16"
-          @click="deleteImg(i)"
+          :size="iconSize"
+          @click.stop="deleteImg(i)"
         />
       </div>
     </div>
@@ -194,9 +204,10 @@ defineExpose({
       v-if="!disabledAdd"
       :class="`flex-center wh-80 br-8 border-1 border-dashed border-gray-5 bg-eee
       cursor-pointer hover:border-primary hover:text-primary`"
+      :style="{ width: `${imgStyle.width}px`, height: `${imgStyle.height}px` }"
       @click="addImg"
     >
-      <TheIcon icon="carbon:add" :size="20" color="currentColor" />
+      <TheIcon icon="carbon:add" :size="iconSize" color="currentColor" />
     </div>
     <input
       ref="$upload"
@@ -216,6 +227,12 @@ defineExpose({
   }
   &:hover > &__mark {
     visibility: visible;
+  }
+}
+.action-icon {
+  transition: color 0.2s;
+  &:hover {
+    color: #fff;
   }
 }
 </style>

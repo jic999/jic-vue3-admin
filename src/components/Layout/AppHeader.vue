@@ -8,6 +8,10 @@ import _ from 'lodash'
 
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+
+const router = useRouter()
+const route = useRoute()
 
 /* Toggle Sidebar */
 const appStore = useAppStore()
@@ -16,6 +20,9 @@ const { collapsed } = storeToRefs(appStore)
 const { toggleSidebar } = appStore
 
 /* BreadCrumb */
+const breadCrumbList = computed(() =>
+  route.matched.filter((item) => !!item.meta?.title)
+)
 function handleBreadClick(path) {
   if (path === route.path) return
   router.push(path)
@@ -31,9 +38,6 @@ function getIcon(meta) {
 const { userInfo, logout } = useUserStore()
 
 const userOptions = [{ label: '退出登录', key: 'logout' }]
-
-const router = useRouter()
-const route = useRoute()
 
 function handleSelect(key) {
   const handler = {
@@ -61,7 +65,7 @@ function handleSelect(key) {
       <div ml-12 pl-12 border-l-2>
         <n-breadcrumb>
           <n-breadcrumb-item
-            v-for="item in route.matched.filter((item) => !!item.meta?.title)"
+            v-for="item in breadCrumbList"
             :key="item.path"
             @click="handleBreadClick(item.path)"
           >

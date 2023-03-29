@@ -9,7 +9,7 @@ const appStore = useAppStore()
 
 const contentStyle = {
   height: '100%',
-  padding: '24px',
+  padding: '18px',
 }
 </script>
 

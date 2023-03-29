@@ -14,14 +14,13 @@ export default {
    * @return {Promise}
    */
   login(params) {
-    console.log('login before', params)
-    return req.post('/user/login', params)
+    return req.post('/admin/user/login', params)
   },
   reqAuth() {
-    return req.post('/user/login-status')
+    return req.post('/admin/user/login-status')
   },
   reqList(params) {
-    return req.post('/admin/user/list', params)
+    return req.get('/admin/user/list', params)
   },
   reqPage(params = {}) {
     return req.post('/admin/user/page', params)
@@ -38,5 +37,11 @@ export default {
   },
   reqDelete(id) {
     return req.delete(`/admin/user/${id}`)
+  },
+  reqPhotoList(id) {
+    return req.get(`/admin/user/photo/${id}`)
+  },
+  reqPhotoUpload(params) {
+    return req.post('/admin/user/photo', params)
   },
 }

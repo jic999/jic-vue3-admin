@@ -1,8 +1,18 @@
 <script setup>
-import { NSwitch } from 'naive-ui'
+import { RouterView, useRouter } from 'vue-router'
+import { NButton, NSwitch } from 'naive-ui'
 import SmartCrud from '@/components/crud/SmartCrud.vue'
 import userApi from '@/api/user.api'
 import _ from 'lodash'
+
+const router = useRouter()
+
+function pushWithData({ name, data }) {
+  router.beforeEach((to) => {
+    to.meta.data = data
+  })
+  router.push({ name })
+}
 
 /* Form */
 const formItems = reactive({
@@ -58,13 +68,13 @@ const formItems = reactive({
       { label: '禁用', value: -1 },
     ],
   },
-  createAt: {
+  createdAt: {
     label: '创建时间',
     value: '',
     type: 'Input',
     attrs: { disabled: true, placeholder: '自动生成' },
   },
-  updateAt: {
+  updatedAt: {
     label: '更新时间',
     value: '',
     type: 'Input',
@@ -89,7 +99,11 @@ const columns = [
     key: 'avatar',
     width: 60,
     render(row) {
-      if (row.avatar) return h('img', { src: row.avatar, class: 'wh-36' })
+      if (row.avatar)
+        return h('img', {
+          src: row.avatar,
+          class: 'wh-36 object-cover object-center',
+        })
       else return h('span', {}, '无')
     },
   },
@@ -137,25 +151,42 @@ const columns = [
   },
   {
     title: '创建时间',
-    key: 'createAt',
+    key: 'createdAt',
     width: 150,
     render(row) {
-      const time = new Date(row.createAt)
+      const time = new Date(row.createdAt)
       return h('span', {}, time.toLocaleString())
     },
   },
   {
     title: '更新时间',
-    key: 'updateAt',
+    key: 'updatedAt',
     width: 150,
     render(row) {
-      const time = new Date(row.updateAt)
+      const time = new Date(row.updatedAt)
       return h('span', {}, time.toLocaleString())
     },
   },
+  {
+    title: '图片管理',
+    width: 80,
+    render(row) {
+      return h(
+        NButton,
+        {
+          type: 'primary',
+          size: 'tiny',
+          secondary: true,
+          onClick: () => router.push({ name: 'Photo', state: row }),
+        },
+        () => '管理'
+      )
+    },
+  },
 ]
-const excludeField = ['updateAt', 'createAt']
+const excludeField = ['updatedAt', 'createdAt']
 const updateParamsHandler = (formData) => {
+  console.log(formData)
   const formParams = new FormData()
   const { avatar, ...params } = formData
   for (let key in params) {
@@ -186,16 +217,19 @@ const tableAttrs = {
 </script>
 
 <template>
-  <SmartCrud
-    title="用户"
-    :form-items="formItems"
-    :columns="columns"
-    :exclude-field="excludeField"
-    :api="userApi"
-    :table-attrs="tableAttrs"
-    :create-params-handler="createParamsHandler"
-    :update-params-handler="updateParamsHandler"
-  />
+  <template v-if="$route.name === 'Crud2'">
+    <SmartCrud
+      title="用户"
+      :form-items="formItems"
+      :columns="columns"
+      :exclude-field="excludeField"
+      :api="userApi"
+      :table-attrs="tableAttrs"
+      :create-params-handler="createParamsHandler"
+      :update-params-handler="updateParamsHandler"
+    />
+  </template>
+  <RouterView />
 </template>
 
 <style lang="scss" scoped></style>

@@ -46,6 +46,19 @@ export default {
             title: 'SMART_CRUD',
             icon: 'carbon:code',
           },
+          childrenHidden: true,
+          children: [
+            {
+              path: 'photo',
+              name: 'Photo',
+              component: () => import('./crud/photo/index.vue'),
+              meta: {
+                title: '照片管理',
+                icon: 'carbon:image',
+                parent: 'Crud2',
+              },
+            },
+          ],
         },
       ],
     },

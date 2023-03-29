@@ -64,7 +64,7 @@ async function handleQuery() {
     isLoading.value = true
     let paginationParams = {}
     if (props.isPagination) {
-      paginationParams = { pageNo: pageInfo.page, pageSize: pageInfo.pageSize }
+      paginationParams = { page: pageInfo.page, pageSize: pageInfo.pageSize }
     }
     const { code, data, msg } = await props.getData({
       ...props.queryParams,
