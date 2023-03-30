@@ -2,7 +2,7 @@
 import { onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
-import userApi from '@/api/user.api'
+import userApi from '@/api/user'
 import { lStorage } from '@/utils/storage'
 import { useUserStore } from '@/stores'
 

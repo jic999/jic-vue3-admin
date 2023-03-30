@@ -96,8 +96,7 @@ function addImg() {
 
 let currentIndex = -1
 function binding() {
-  props.modelValue && $emits('update:modelValue', fileList)
-  console.log(fileList, props.modelValue)
+  !_.isUndefined(props.modelValue) && $emits('update:modelValue', fileList)
 }
 function updateImg(i) {
   currentIndex = i

@@ -2,7 +2,7 @@
 import { RouterView, useRouter } from 'vue-router'
 import { NButton, NSwitch } from 'naive-ui'
 import SmartCrud from '@/components/crud/SmartCrud.vue'
-import userApi from '@/api/user.api'
+import userApi from '@/api/user'
 import _ from 'lodash'
 
 const router = useRouter()

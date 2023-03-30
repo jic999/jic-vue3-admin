@@ -62,5 +62,23 @@ export default {
         },
       ],
     },
+    {
+      path: 'md-editor',
+      name: 'MdEditor',
+      component: () => import('./md-editor/index.vue'),
+      meta: {
+        title: 'MD编辑器',
+        icon: 'carbon:document',
+      },
+    },
+    {
+      path: 'md-render',
+      name: 'MdRender',
+      component: () => import('./md-render/index.vue'),
+      meta: {
+        title: 'MD渲染',
+        icon: 'carbon:ibm-watson-natural-language-understanding',
+      },
+    },
   ],
 }

@@ -7,7 +7,7 @@ import SmartTable from '@/components/crud/SmartTable.vue'
 import SmartForm from '@/components/crud/SmartForm.vue'
 import useCrud from '@/hooks/useCrud'
 
-import userApi from '@/api/user.api'
+import userApi from '@/api/user'
 
 /* Form */
 const formItems = reactive({
@@ -63,20 +63,20 @@ const formItems = reactive({
       { label: '禁用', value: -1 },
     ],
   },
-  createAt: {
+  createdAt: {
     label: '创建时间',
     value: '',
     type: 'Input',
     attrs: { disabled: true, placeholder: '自动生成' },
   },
-  updateAt: {
+  updatedAt: {
     label: '更新时间',
     value: '',
     type: 'Input',
     attrs: { disabled: true, placeholder: '自动生成' },
   },
 })
-const excludeField = ['updateAt', 'createAt']
+const excludeField = ['updatedAt', 'createdAt']
 
 const updateParamsHandler = (formData) => {
   const formParams = new FormData()
@@ -145,7 +145,11 @@ const columns = [
     key: 'avatar',
     width: 100,
     render(row) {
-      if (row.avatar) return h('img', { src: row.avatar, class: 'wh-36' })
+      if (row.avatar)
+        return h('img', {
+          src: row.avatar,
+          class: 'wh-36 object-cover object-center',
+        })
       else return h('span', {}, '无')
     },
   },
@@ -193,17 +197,17 @@ const columns = [
   },
   {
     title: '创建时间',
-    key: 'createAt',
+    key: 'createdAt',
     render(row) {
-      const time = new Date(row.createAt)
+      const time = new Date(row.createdAt)
       return h('span', {}, time.toLocaleString())
     },
   },
   {
     title: '更新时间',
-    key: 'updateAt',
+    key: 'updatedAt',
     render(row) {
-      const time = new Date(row.updateAt)
+      const time = new Date(row.updatedAt)
       return h('span', {}, time.toLocaleString())
     },
   },

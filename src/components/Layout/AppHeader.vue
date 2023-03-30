@@ -90,7 +90,7 @@ function handleSelect(key) {
           <img v-if="userInfo.avatar" :src="userInfo.avatar" wh-36 circle />
           <TheIcon
             v-else
-            icon="carbon:user-avatar"
+            icon="carbon:user-avatar-filled"
             :size="36"
             color="currentColor"
           />

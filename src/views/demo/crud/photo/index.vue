@@ -13,6 +13,8 @@ const photoList = ref()
 
 let initialPhotoList = null
 
+// TODO 前端上传图片到七牛云
+
 onMounted(() => {
   userApi
     .reqPhotoList(userInfo.id)
