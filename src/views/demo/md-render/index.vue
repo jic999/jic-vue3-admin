@@ -7,6 +7,13 @@ import 'highlight.js/styles/github.css'
 const content = localStorage.getItem('vditorvditor')
 
 const renderedContent = ref()
+// TODO 防XXS
+const renderer = {
+  image(href, title, text) {
+    return `<img src="${href}" alt="${text}" title="${title}" style="max-width: 100%;" />`
+  },
+}
+marked.use({ renderer })
 
 function highlightCode(code, lang) {
   const language = hljs.getLanguage(lang) ? lang : 'plaintext'
@@ -23,7 +30,7 @@ onMounted(() => {
 
 <template>
   <h1 border-b>MD Render</h1>
-  <div v-html="renderedContent"></div>
+  <div px-108 v-html="renderedContent"></div>
 </template>
 
 <style lang="scss" scoped></style>

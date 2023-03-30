@@ -16,6 +16,7 @@ specifiers:
   naive-ui: ^2.34.3
   pinia: ^2.0.32
   prettier: ^2.8.5
+  qiniu-js: ^3.4.1
   sass: ^1.59.3
   unocss: ^0.50.6
   unocss-preset-scalpel: ^1.2.6
@@ -34,6 +35,7 @@ dependencies:
   lodash: registry.npmmirror.com/lodash/4.17.21
   marked: registry.npmmirror.com/marked/4.3.0
   pinia: registry.npmmirror.com/pinia/2.0.33_vue@3.2.47
+  qiniu-js: registry.npmmirror.com/qiniu-js/3.4.1
   vditor: registry.npmmirror.com/vditor/3.9.1
   vue: registry.npmmirror.com/vue/3.2.47
   vue-router: registry.npmmirror.com/vue-router/4.1.6_vue@3.2.47
@@ -109,6 +111,16 @@ packages:
     hasBin: true
     dependencies:
       '@babel/types': registry.npmmirror.com/@babel/types/7.21.3
+
+  registry.npmmirror.com/@babel/runtime-corejs2/7.21.0:
+    resolution: {integrity: sha512-hVFDLYkuthnvQwWoOniPSq+RWyQTiimVdMXQJujoiSX8maFh/62+qRImGkRpeRflsVXXSMFS4HgNe3X9fuw5ww==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@babel/runtime-corejs2/-/runtime-corejs2-7.21.0.tgz}
+    name: '@babel/runtime-corejs2'
+    version: 7.21.0
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      core-js: registry.npmmirror.com/core-js/2.6.12
+      regenerator-runtime: registry.npmmirror.com/regenerator-runtime/0.13.11
+    dev: false
 
   registry.npmmirror.com/@babel/types/7.21.3:
     resolution: {integrity: sha512-sBGdETxC+/M4o/zKC0sl6sjWv62WFR/uzxrJ6uYyMLZOUlPnwzw0tKgVHOXxaAd5l2g8pEDM5RZ495GPQI77kg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@babel/types/-/types-7.21.3.tgz}
@@ -1181,6 +1193,14 @@ packages:
     name: consola
     version: 2.15.3
     dev: true
+
+  registry.npmmirror.com/core-js/2.6.12:
+    resolution: {integrity: sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/core-js/-/core-js-2.6.12.tgz}
+    name: core-js
+    version: 2.6.12
+    deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
+    requiresBuild: true
+    dev: false
 
   registry.npmmirror.com/cross-spawn/7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/cross-spawn/-/cross-spawn-7.0.3.tgz}
@@ -2390,6 +2410,24 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  registry.npmmirror.com/qiniu-js/3.4.1:
+    resolution: {integrity: sha512-8vxrLqDPlJUk3fUAaTozh3TAT3ww9B5KqGogmGuTiFHnewXDoMxTCSY5z8Ab5UNdrCo6ZxDM07G/o++CICRUFw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/qiniu-js/-/qiniu-js-3.4.1.tgz}
+    name: qiniu-js
+    version: 3.4.1
+    dependencies:
+      '@babel/runtime-corejs2': registry.npmmirror.com/@babel/runtime-corejs2/7.21.0
+      querystring: registry.npmmirror.com/querystring/0.2.1
+      spark-md5: registry.npmmirror.com/spark-md5/3.0.2
+    dev: false
+
+  registry.npmmirror.com/querystring/0.2.1:
+    resolution: {integrity: sha512-wkvS7mL/JMugcup3/rMitHmd9ecIGd2lhFhK9N3UUQ450h66d1r3Y9nvXzQAW1Lq+wyx61k/1pfKS5KuKiyEbg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/querystring/-/querystring-0.2.1.tgz}
+    name: querystring
+    version: 0.2.1
+    engines: {node: '>=0.4.x'}
+    deprecated: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
+    dev: false
+
   registry.npmmirror.com/queue-microtask/1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/queue-microtask/-/queue-microtask-1.2.3.tgz}
     name: queue-microtask
@@ -2404,6 +2442,12 @@ packages:
     dependencies:
       picomatch: registry.npmmirror.com/picomatch/2.3.1
     dev: true
+
+  registry.npmmirror.com/regenerator-runtime/0.13.11:
+    resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz}
+    name: regenerator-runtime
+    version: 0.13.11
+    dev: false
 
   registry.npmmirror.com/resolve-from/4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/resolve-from/-/resolve-from-4.0.0.tgz}
@@ -2541,6 +2585,12 @@ packages:
     name: sourcemap-codec
     version: 1.4.8
     deprecated: Please use @jridgewell/sourcemap-codec instead
+
+  registry.npmmirror.com/spark-md5/3.0.2:
+    resolution: {integrity: sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/spark-md5/-/spark-md5-3.0.2.tgz}
+    name: spark-md5
+    version: 3.0.2
+    dev: false
 
   registry.npmmirror.com/strip-ansi/6.0.1:
     resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/strip-ansi/-/strip-ansi-6.0.1.tgz}
