@@ -171,7 +171,7 @@ defineExpose({
       ref="$fileList"
       :key="i"
       class="preview-img relative br-8 overflow-hidden"
-      :style="{ width: imgStyle.width, height: imgStyle.height }"
+      :style="{ width: `${imgStyle.width}px`, height: `${imgStyle.height}px` }"
     >
       <n-image class="wh-full" :src="img[urlFiled]" v-bind="imgStyle" border />
       <div

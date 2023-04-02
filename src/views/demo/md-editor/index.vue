@@ -17,7 +17,11 @@ function getContent() {
 }
 function reqQiniuUpload(file) {
   return new Promise((resolve, reject) => {
-    const observable = qiniu.upload(file, undefined, uploadInfo.uploadToken)
+    const observable = qiniu.upload(
+      file,
+      `test001/qwe1/${file.name}`,
+      uploadInfo.uploadToken
+    )
     const observer = {
       error(err) {
         reject(err)
@@ -37,26 +41,26 @@ function createEditor() {
       accept: 'image/*,.jpg,.png,.jpeg',
       multiple: true,
       handler: async (files) => {
+        const loadingMsg = $message.loading('上传中...', { duration: 0 })
         console.log(files)
-        // TODO 文件上传
         try {
           const reqPromises = []
           files.forEach((file) => {
             reqPromises.push(reqQiniuUpload(file))
-            // reqQiniuUpload(file)
           })
-          // 单次请求
           const result = await Promise.all(reqPromises)
           console.log('result', result)
-          // if(vditor.value && vditor.value.vditor.currentMode = 'wysiwyg') {
-          // }
           const urlList = result.map(({ key }) => {
             const url = `//${uploadInfo.domain}/${key}`
             return `![image](${url})`
           })
-          vditor.value.insertValue(urlList.join('\n'))
+          $message.success('上传成功~')
+          vditor.value.insertValue(urlList.join('\n\n'))
         } catch (error) {
           console.log(error)
+          $message.error('上传失败，请稍后再试')
+        } finally {
+          loadingMsg.destroy()
         }
       },
     },
